@@ -1,51 +1,41 @@
-"use client";
-
-import { FormEvent } from "react";
-import toast from "react-hot-toast";
-import styles from "./SearchBar.module.css";
+import React, { useState } from "react";
+import css from "./SearchBar.module.css";
 
 interface SearchBarProps {
   onSubmit: (query: string) => void;
 }
 
-export default function SearchBar({ onSubmit }: SearchBarProps) {
-  const handleAction = (formData: FormData) => {
-    const query = (formData.get("query") as string).trim();
-    if (!query) {
-      toast.error("Please enter your search query.");
-      return;
+const SearchBar: React.FC<SearchBarProps> = ({ onSubmit }) => {
+  const [inputValue, setInputValue] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const trimmed = inputValue.trim();
+    if (trimmed) {
+      onSubmit(trimmed);
     }
-    onSubmit(query);
   };
 
   return (
-    <header className={styles.header}>
-      <div className={styles.container}>
-        <a
-          className={styles.link}
-          href="https://www.themoviedb.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by TMDB
-        </a>
-        <form
-          action={(formData) => handleAction(formData)}
-          className={styles.form}
-        >
-          <input
-            className={styles.input}
-            type="text"
-            name="query"
-            autoComplete="off"
-            placeholder="Search movies..."
-            autoFocus
-          />
-          <button className={styles.button} type="submit">
-            Search
-          </button>
-        </form>
-      </div>
+    <header className={css.header}>
+      <form onSubmit={handleSubmit} className={css.form}>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={handleChange}
+          placeholder="Search movies..."
+          className={css.input}
+        />
+        <button type="submit" className={css.button}>
+          Search
+        </button>
+      </form>
     </header>
   );
-}
+};
+
+export default SearchBar;

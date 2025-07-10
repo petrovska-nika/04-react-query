@@ -1,72 +1,46 @@
-import { useEffect, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
-import { Movie } from "../../types/movie";
-import { fetchMovies } from "../../services/movieService";
-
+import { useState } from "react";
+import { useMovies } from "../../hooks/useMovies";
+import MovieList from "../MovieList/MovieList";
 import SearchBar from "../SearchBar/SearchBar";
-import MovieGrid from "../MovieGrid/MovieGrid";
-import Loader from "../Loader/Loader";
-import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import MovieModal from "../MovieModal/MovieModal";
+import ReactPaginate from "react-paginate";
+import css from "./App.module.css";
 
-export default function App() {
+const App = () => {
   const [query, setQuery] = useState("");
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    if (!query) return;
+  const { data, isLoading, isError } = useMovies(query, page);
 
-    async function getMovies() {
-      try {
-        setIsLoading(true);
-        setError(false);
-        const data = await fetchMovies(query);
-        if (data.length === 0) {
-          toast("No movies found for your request.");
-        }
-        setMovies(data);
-      } catch (err) {
-        setError(true);
-        toast.error("Failed to fetch movies");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    getMovies();
-  }, [query]);
-
-  const handleSearch = (newQuery: string) => {
-    if (newQuery === query) return;
-    setQuery(newQuery);
-    setMovies([]); // очищаємо попередні результати
-  };
-
-  const handleSelectMovie = (movie: Movie) => {
-    setSelectedMovie(movie);
-    document.body.style.overflow = "hidden"; // заборона скролу
-  };
-
-  const handleCloseModal = () => {
-    setSelectedMovie(null);
-    document.body.style.overflow = ""; // відновлення скролу
+  const handleSubmit = (value: string) => {
+    setQuery(value);
+    setPage(1);
   };
 
   return (
     <div>
-      <SearchBar onSubmit={handleSearch} />
-      <Toaster position="top-right" />
-      {isLoading && <Loader />}
-      {error && <ErrorMessage />}
-      {!isLoading && !error && movies.length > 0 && (
-        <MovieGrid movies={movies} onSelect={handleSelectMovie} />
-      )}
-      {selectedMovie && (
-        <MovieModal movie={selectedMovie} onClose={handleCloseModal} />
+      <SearchBar onSubmit={handleSubmit} />
+      {isLoading && <p>Loading...</p>}
+      {isError && <p>Error fetching data</p>}
+      {data && (
+        <>
+          {data.total_pages > 1 && (
+            <ReactPaginate
+              pageCount={data.total_pages}
+              pageRangeDisplayed={5}
+              marginPagesDisplayed={1}
+              onPageChange={({ selected }) => setPage(selected + 1)}
+              forcePage={page - 1}
+              containerClassName={css.pagination}
+              activeClassName={css.active}
+              nextLabel="→"
+              previousLabel="←"
+            />
+          )}
+          <MovieList movies={data.results} />
+        </>
       )}
     </div>
   );
-}
+};
+
+export default App;
