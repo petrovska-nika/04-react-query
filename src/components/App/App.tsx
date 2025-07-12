@@ -16,29 +16,26 @@ const App = () => {
     setPage(1);
   };
 
+  if (isError) return <p>Error fetching data</p>;
+  if (isLoading) return <p>Loading...</p>;
+
   return (
     <div>
-      <SearchBar onSubmit={handleSubmit} />
-      {isLoading && <p>Loading...</p>}
-      {isError && <p>Error fetching data</p>}
-      {data && (
-        <>
-          {data.total_pages > 1 && (
-            <ReactPaginate
-              pageCount={data.total_pages}
-              pageRangeDisplayed={5}
-              marginPagesDisplayed={1}
-              onPageChange={({ selected }) => setPage(selected + 1)}
-              forcePage={page - 1}
-              containerClassName={css.pagination}
-              activeClassName={css.active}
-              nextLabel="→"
-              previousLabel="←"
-            />
-          )}
-          <MovieList movies={data.results} />
-        </>
+      {data?.total_pages && data.total_pages > 1 && (
+        <ReactPaginate
+          pageCount={data.total_pages}
+          pageRangeDisplayed={5}
+          marginPagesDisplayed={1}
+          onPageChange={({ selected }) => setPage(selected + 1)}
+          forcePage={page - 1}
+          containerClassName={css.pagination}
+          activeClassName={css.active}
+          nextLabel="→"
+          previousLabel="←"
+        />
       )}
+
+      {data?.results && <MovieList movies={data.results} />}
     </div>
   );
 };

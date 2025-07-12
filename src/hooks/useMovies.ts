@@ -1,20 +1,13 @@
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchMovies } from "../services/movieService";
 import { MoviesResponse } from "../types/movie";
 
 export const useMovies = (query: string, page: number) => {
-  return useQuery<
-    MoviesResponse,
-    Error,
-    MoviesResponse,
-    [string, string, number]
-  >({
+  return useQuery<MoviesResponse, Error>({
     queryKey: ["movies", query, page],
-    queryFn: ({ queryKey }) => {
-      const [, query, page] = queryKey;
-      return fetchMovies(query, page);
-    },
+    queryFn: () => fetchMovies(query, page),
     enabled: !!query,
     keepPreviousData: true,
+    staleTime: 5 * 60 * 1000,
   });
 };

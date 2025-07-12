@@ -8,7 +8,7 @@ export const fetchMovies = async (
   query: string,
   page: number
 ): Promise<MoviesResponse> => {
-  const response = await axios.get(`${BASE_URL}/search/movie`, {
+  const { data } = await axios.get<MoviesResponse>(`${BASE_URL}/search/movie`, {
     params: {
       api_key: API_KEY,
       query,
@@ -16,5 +16,5 @@ export const fetchMovies = async (
     },
   });
 
-  return response.data; // ✅ повертаємо об'єкт з полями: results, total_pages тощо
+  return data;
 };
