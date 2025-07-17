@@ -1,16 +1,16 @@
 import React from "react";
 import { Movie } from "../../types/movie";
 import MovieCard from "../MovieCard/MovieCard";
-import css from "./MovieList.module.css";
+import css from "./MovieGrid.module.css";
 
-interface MovieListProps {
+interface MovieGridProps {
   movies: Movie[];
-  onSelectMovie: (movie: Movie) => void;
+  children: React.ReactNode;
 }
 
-const MovieList: React.FC<MovieListProps> = ({ movies }) => {
+const MovieGrid: React.FC<MovieGridProps> = ({ movies }) => {
   return (
-    <ul className={css.list}>
+    <ul className={css.grid}>
       {movies.map((movie) => (
         <li key={movie.id} className={css.item}>
           <MovieCard movie={movie} />
@@ -20,4 +20,4 @@ const MovieList: React.FC<MovieListProps> = ({ movies }) => {
   );
 };
 
-export default MovieList;
+export default MovieGrid;

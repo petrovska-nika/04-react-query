@@ -1,27 +1,46 @@
 import { useState } from "react";
 import { useMovies } from "../../hooks/useMovies";
-import MovieList from "../MovieList/MovieList";
+
 import SearchBar from "../SearchBar/SearchBar";
+import Loader from "../Loader/Loader";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import MovieList from "../MovieList/MovieList";
+import MovieGrid from "../MovieGrid/MovieGrid";
+import MovieModal from "../MovieModal/MovieModal";
+
 import ReactPaginate from "react-paginate";
 import css from "./App.module.css";
+
+import { Movie } from "../../types/movie";
 
 const App = () => {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-  const { data, isLoading, isError } = useMovies(query, page);
+  const { data, isLoading, isError, isSuccess } = useMovies(query, page);
 
   const handleSubmit = (value: string) => {
     setQuery(value);
     setPage(1);
   };
 
-  if (isError) return <p>Error fetching data</p>;
-  if (isLoading) return <p>Loading...</p>;
+  const handleSelectMovie = (movie: Movie) => {
+    setSelectedMovie(movie);
+  };
+
+  const closeModal = () => {
+    setSelectedMovie(null);
+  };
 
   return (
-    <div>
-      {data?.total_pages && data.total_pages > 1 && (
+    <div className={css.app}>
+      <SearchBar onSubmit={handleSubmit} />
+
+      {isLoading && <Loader />}
+      {isError && <ErrorMessage message="Щось пішло не так" />}
+
+      {isSuccess && data?.total_pages > 1 && (
         <ReactPaginate
           pageCount={data.total_pages}
           pageRangeDisplayed={5}
@@ -35,7 +54,18 @@ const App = () => {
         />
       )}
 
-      {data?.results && <MovieList movies={data.results} />}
+      {isSuccess && (
+        <MovieGrid movies={data?.results || []}>
+          <MovieList
+            movies={data?.results || []}
+            onSelectMovie={handleSelectMovie}
+          />
+        </MovieGrid>
+      )}
+
+      {selectedMovie && (
+        <MovieModal movie={selectedMovie} onClose={closeModal} />
+      )}
     </div>
   );
 };
