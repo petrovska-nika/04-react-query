@@ -5,14 +5,14 @@ import css from "./MovieGrid.module.css";
 
 interface MovieGridProps {
   movies: Movie[];
-  children: React.ReactNode;
+  onSelect: (movie: Movie) => void;
 }
 
-const MovieGrid: React.FC<MovieGridProps> = ({ movies }) => {
+const MovieGrid: React.FC<MovieGridProps> = ({ movies, onSelect }) => {
   return (
     <ul className={css.grid}>
       {movies.map((movie) => (
-        <li key={movie.id} className={css.item}>
+        <li key={movie.id} className={css.item} onClick={() => onSelect(movie)}>
           <MovieCard movie={movie} />
         </li>
       ))}

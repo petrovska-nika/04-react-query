@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchMovies } from "../services/movieService";
-import { MoviesResponse } from "../types/movie";
+import { MoviesResponse } from "../services/movieService";
 
 export const useMovies = (query: string, page: number) => {
   return useQuery<MoviesResponse, Error>({

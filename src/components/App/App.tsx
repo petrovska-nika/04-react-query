@@ -1,16 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMovies } from "../../hooks/useMovies";
 
-import SearchBar from "../SearchBar/SearchBar";
+import { SearchBar } from "../SearchBar/SearchBar";
 import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import MovieList from "../MovieList/MovieList";
 import MovieGrid from "../MovieGrid/MovieGrid";
-import MovieModal from "../MovieModal/MovieModal";
+import { MovieModal } from "../MovieModal/MovieModal";
 
 import ReactPaginate from "react-paginate";
-import css from "./App.module.css";
+import { Toaster, toast } from "react-hot-toast";
 
+import css from "./App.module.css";
 import { Movie } from "../../types/movie";
 
 const App = () => {
@@ -20,8 +20,11 @@ const App = () => {
 
   const { data, isLoading, isError, isSuccess } = useMovies(query, page);
 
-  const totalPages = data?.total_pages;
-  const movies = data?.results;
+  useEffect(() => {
+    if (isSuccess && data?.results.length === 0) {
+      toast("Фільми не знайдено");
+    }
+  }, [data, isSuccess]);
 
   const handleSubmit = (value: string) => {
     setQuery(value);
@@ -38,6 +41,7 @@ const App = () => {
 
   return (
     <div className={css.app}>
+      <Toaster position="top-center" />
       <SearchBar onSubmit={handleSubmit} />
 
       {isLoading && <Loader />}
@@ -58,12 +62,7 @@ const App = () => {
       )}
 
       {isSuccess && (
-        <MovieGrid movies={data?.results || []}>
-          <MovieList
-            movies={data?.results || []}
-            onSelectMovie={handleSelectMovie}
-          />
-        </MovieGrid>
+        <MovieGrid movies={data?.results || []} onSelect={handleSelectMovie} />
       )}
 
       {selectedMovie && (

@@ -4,15 +4,8 @@ export interface Movie {
   overview: string;
   release_date: string;
   poster_path: string | null;
-  backdrop_path?: string | null;
-  vote_average?: number;
+  backdrop_path: string | null;
+  vote_average: number;
   vote_count?: number;
   genre_ids?: number[];
-}
-
-export interface MoviesResponse {
-  page: number;
-  results: Movie[];
-  total_pages: number;
-  total_results: number;
 }
