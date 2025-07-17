@@ -1,17 +1,8 @@
 import axios from "axios";
+import { Movie } from "../types/movie";
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
-
-export interface Movie {
-  id: number;
-  title: string;
-  overview: string;
-  poster_path: string | null;
-  backdrop_path: string;
-  vote_average: number;
-  release_date: string;
-}
 
 export interface MoviesResponse {
   results: Movie[];
