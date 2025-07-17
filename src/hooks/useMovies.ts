@@ -7,7 +7,8 @@ export const useMovies = (query: string, page: number) => {
     queryKey: ["movies", query, page],
     queryFn: () => fetchMovies(query, page),
     enabled: !!query,
-    keepPreviousData: true,
     staleTime: 5 * 60 * 1000,
+
+    ...{ keepPreviousData: true },
   });
 };

@@ -20,6 +20,9 @@ const App = () => {
 
   const { data, isLoading, isError, isSuccess } = useMovies(query, page);
 
+  const totalPages = data?.total_pages;
+  const movies = data?.results;
+
   const handleSubmit = (value: string) => {
     setQuery(value);
     setPage(1);
