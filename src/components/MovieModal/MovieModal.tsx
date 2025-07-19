@@ -1,40 +1,58 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Movie } from "../../types/movie";
-import styles from "./MovieModal.module.css";
+import css from "./MovieModal.module.css";
 
 interface MovieModalProps {
   movie: Movie;
   onClose: () => void;
 }
 
-export const MovieModal = ({ movie, onClose }: MovieModalProps) => {
+export default function MovieModal({ movie, onClose }: MovieModalProps) {
   useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "Escape") {
+        onClose();
+      }
     };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "auto";
+    };
   }, [onClose]);
 
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return createPortal(
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <img
-          src={`https://image.tmdb.org/t/p/w780${movie.backdrop_path}`}
-          alt={movie.title}
-        />
-        <h2>{movie.title}</h2>
-        <p>{movie.overview}</p>
-        <p>
-          <strong>Рейтинг:</strong> {movie.vote_average}
-        </p>
-        <p>
-          <strong>Дата релізу:</strong> {movie.release_date}
-        </p>
-        <button onClick={onClose}>Закрити</button>
+    <div className={css.backdrop} onClick={handleBackdropClick}>
+      <div className={css.modal} onClick={(e) => e.stopPropagation()}>
+        <button className={css.closeBtn} onClick={onClose}>
+          ×
+        </button>
+        <div className={css.content}>
+          <img
+            src={
+              movie.backdrop_path
+                ? `https://image.tmdb.org/t/p/w780${movie.backdrop_path}`
+                : "https://via.placeholder.com/780x439?text=No+Image"
+            }
+            alt={movie.title}
+            className={css.image}
+          />
+          <h2 className={css.title}>{movie.title}</h2>
+          <p className={css.overview}>{movie.overview}</p>
+          <p className={css.rating}>⭐ Рейтинг: {movie.vote_average}</p>
+        </div>
       </div>
     </div>,
     document.body
   );
-};
+}
