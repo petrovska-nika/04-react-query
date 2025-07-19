@@ -42,7 +42,7 @@ const App = () => {
   return (
     <div className={css.app}>
       <Toaster position="top-center" />
-      <SearchBar onSubmit={handleSubmit} />
+      <SearchBar onSearch={handleSubmit} />
 
       {isLoading && <Loader />}
       {isError && <ErrorMessage message="Щось пішло не так" />}
