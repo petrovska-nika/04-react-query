@@ -16,16 +16,18 @@ export default function SearchBar({ onSubmit }: SearchBarProps) {
   }
 
   return (
-    <form action={formAction} className={css.form}>
-      <input
-        type="text"
-        name="query"
-        className={css.input}
-        placeholder="Введіть назву фільму"
-      />
-      <button type="submit" className={css.button}>
-        Пошук
-      </button>
-    </form>
+    <header className={css.header}>
+      <form action={formAction} className={css.form}>
+        <input
+          type="text"
+          name="query"
+          className={css.input}
+          placeholder="Введіть назву фільму"
+        />
+        <button type="submit" className={css.button}>
+          Пошук
+        </button>
+      </form>
+    </header>
   );
 }
