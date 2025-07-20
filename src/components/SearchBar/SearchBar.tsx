@@ -2,17 +2,17 @@ import toast from "react-hot-toast";
 import css from "./SearchBar.module.css";
 
 interface SearchBarProps {
-  onSearch: (query: string) => void;
+  onSubmit: (query: string) => void;
 }
 
-export default function SearchBar({ onSearch }: SearchBarProps) {
+export default function SearchBar({ onSubmit }: SearchBarProps) {
   async function formAction(formData: FormData) {
     const query = formData.get("query")?.toString().trim();
     if (!query) {
       toast.error("Введіть пошуковий запит");
       return;
     }
-    onSearch(query);
+    onSubmit(query);
   }
 
   return (
